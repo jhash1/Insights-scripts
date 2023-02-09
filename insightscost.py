@@ -7,14 +7,15 @@ import time
 import config
 
 
-org = config.FairwindsOrg
+
 bearer_token = config.ApiKey
+org = config.FairwindsOrg
 
-def query_Fairwinds(start_date, end_date, bearer_token, aggregator, timeout):
-    url = f"https://insights.fairwinds.com/v0/organizations/{org}/resources-summary"
+def query_Fairwinds(start_date: str, end_dat: str, bearer_token: str, aggregator: list, timeout: int):
     
-    bearer_token = config.ApiKey
+    url = f"https://insights.fairwinds.com/v0/organizations/{org}/resources-summary"
 
+    
     headers = {
         "Authorization": "Bearer " + bearer_token,
         "Content-Type": "application/json"
@@ -45,12 +46,13 @@ def query_Fairwinds(start_date, end_date, bearer_token, aggregator, timeout):
 
         except requests.exceptions.HTTPError as err:
                 raise SystemExit(err)
+   
             
 
-def getClusterList(start_date: str, end_date: str, bearer_token: str, timeout: int) -> list:
-    url= "https://insights.fairwinds.com/v0/organizations/centaurus/all-clusters"
 
-    bearer_token = config.ApiKey
+def getClusterList(start_date: str, end_date: str, bearer_token: str, timeout: int) -> list:
+   
+    url= f"https://insights.fairwinds.com/v0/organizations/{org}/all-clusters"
 
     headers = {
         "Authorization": "Bearer " + bearer_token,
