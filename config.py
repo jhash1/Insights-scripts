@@ -1,3 +1,5 @@
 ApiKey = "keyhere"
 
-FairwindsOrg = "organizationnamehere"
+FairwindsOrg = "org name"
+
+Budget = 5

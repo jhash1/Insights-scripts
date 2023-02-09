@@ -7,10 +7,12 @@ import time
 import config
 
 
+org = config.FairwindsOrg
+bearer_token = config.ApiKey
+
 def query_Fairwinds(start_date, end_date, bearer_token, aggregator, timeout):
     url = f"https://insights.fairwinds.com/v0/organizations/{org}/resources-summary"
     
-    org = config.FairwindsOrg
     bearer_token = config.ApiKey
 
     headers = {
@@ -32,16 +34,15 @@ def query_Fairwinds(start_date, end_date, bearer_token, aggregator, timeout):
         try:
             response = requests.get(url, params=params, headers=headers, timeout=timeout)
             response.raise_for_status()
-            if response.status_code == 200:
-                data = response.json()
-                for resource in data["resources"]:
-                    clusterName = resource['cluster']
-                    namespace = (resource['namespace'])
-                    cost = (resource['costs']['actual']['total'])
-                    # print(clusterName,namespace, cost)
-                    if cost > float(5):
-                        print("Cluster:",clusterName, "->", namespace, "namespace is over the $5 threshold and MTD costs $",(float(round(cost,2))))
-                        time.sleep(5)
+            data = response.json()
+            for resource in data["resources"]:
+                clusterName = resource['cluster']
+                namespace = (resource['namespace'])
+                cost = (resource['costs']['actual']['total'])
+                # print(clusterName,namespace, cost)
+                if cost > float(5):
+                    print("Cluster:",clusterName, "->", namespace, "namespace is over the $5 threshold and MTD costs $",(float(round(cost,2))))
+
         except requests.exceptions.HTTPError as err:
                 raise SystemExit(err)
             
@@ -49,8 +50,10 @@ def query_Fairwinds(start_date, end_date, bearer_token, aggregator, timeout):
 def getClusterList(start_date: str, end_date: str, bearer_token: str, timeout: int) -> list:
     url= "https://insights.fairwinds.com/v0/organizations/centaurus/all-clusters"
 
+    bearer_token = config.ApiKey
+
     headers = {
-        "Authorization": "Bearer " + config.ApiKey,
+        "Authorization": "Bearer " + bearer_token,
         "Content-Type": "application/json"
     }
     params2 = {
@@ -67,10 +70,9 @@ def getClusterList(start_date: str, end_date: str, bearer_token: str, timeout: i
 
 start_date = "2023-01-01T00:00:00Z",
 end_date = "2023-01-30T00:00:00Z",
-bearer_token = "760448f45f249a33b07a01c9bc5043a0eccb2e154b8cc53bf199c4d3ace3facf"
+bearer_token = config.ApiKey
 aggregator = ["cluster", "namespace"]
 timeout = 300
 
 data = query_Fairwinds(start_date, end_date, bearer_token, aggregator, timeout)
 names = getClusterList(start_date, end_date, bearer_token, timeout)
-
